@@ -1,7 +1,6 @@
 package georgep.lendingclub.trademon
 
 /**
- * Created by patteg1 on 12/9/2015.
  */
 class HomeOwnershipFilter implements LoanFilter {
     List<String> ownershipTypes = []
