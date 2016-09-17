@@ -1,4 +1,4 @@
-# fin-tas-tech
+# fintastech
 fintech utilities
 - Historical lendingclub data and analysis
 
