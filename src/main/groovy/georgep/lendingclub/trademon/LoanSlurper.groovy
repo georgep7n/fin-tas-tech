@@ -1,5 +1,6 @@
 package georgep.lendingclub.trademon
 
+import java.util.zip.*;
 import au.com.bytecode.opencsv.CSVReader
 
 /**
@@ -89,17 +90,18 @@ class LoanSlurper {
 
     static List<Loan> slurpCSVFiles() {
         def loans = []
-        slurpCSVFile(loans, "LoanStats3a.csv")
-        slurpCSVFile(loans, "LoanStats3b.csv")
-        slurpCSVFile(loans, "LoanStats3c.csv")
-        slurpCSVFile(loans, "LoanStats3d.csv")
-        slurpCSVFile(loans, "LoanStats2016Q1.csv")
-        slurpCSVFile(loans, "LoanStats2016Q2.csv")
+        slurpCSVFile(loans, "LoanStats3a.csv.gz")
+        slurpCSVFile(loans, "LoanStats3b.csv.gz")
+        slurpCSVFile(loans, "LoanStats3c.csv.gz")
+        slurpCSVFile(loans, "LoanStats3d.csv.gz")
+        slurpCSVFile(loans, "LoanStats2016Q1.csv.gz")
+        slurpCSVFile(loans, "LoanStats2016Q2.csv.gz")
         return loans
     }
 
     private static void slurpCSVFile(List<Loan> loans, String csvFileName) throws IOException {
-        CSVReader reader = new CSVReader(new InputStreamReader(Analyze.class.getResourceAsStream("/" + csvFileName)))
+        CSVReader reader = new CSVReader(new InputStreamReader(
+          new GZIPInputStream(Analyze.class.getResourceAsStream("/lendingclub/" + csvFileName))))
         reader.readNext() // descriptor row
         reader.readNext() // header row
         String[] columns
