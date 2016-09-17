@@ -1,4 +1,4 @@
-package georgep.lendingclub.trademon
+package org.georgep7n.lendingclub.analyze
 
 import java.util.zip.*;
 import au.com.bytecode.opencsv.CSVReader

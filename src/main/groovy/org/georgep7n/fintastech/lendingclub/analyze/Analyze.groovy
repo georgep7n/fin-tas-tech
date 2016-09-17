@@ -1,4 +1,4 @@
-package georgep.lendingclub.trademon
+package org.georgep7n.lendingclub.analyze
 
 import java.text.NumberFormat
 
@@ -12,7 +12,7 @@ public class Analyze {
         int numLoans
         double score
     }
-    
+
     private static NumberFormat PCT_FORMAT = NumberFormat.getNumberInstance()
     static {
         PCT_FORMAT.setMinimumFractionDigits(1);
