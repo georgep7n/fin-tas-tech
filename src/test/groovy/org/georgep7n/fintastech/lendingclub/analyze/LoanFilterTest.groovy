@@ -77,4 +77,18 @@ class LoanFilterTest extends Specification {
             result == true
     }
 
+    def "AndFilter.include with two filters, one returning true"() {
+        setup:
+            Loan loan = new Loan()
+            AndFilter filter = new AndFilter()
+            filter.add(new IntRateFilter().set(10))
+            filter.add(new GradeFilter().add("B"))
+        when:
+            loan.intRate = 12
+            loan.grade = "A"
+            def result = filter.include(loan)
+        then:
+            result == false
+    }
+
 }
