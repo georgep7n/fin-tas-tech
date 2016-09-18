@@ -1,4 +1,4 @@
-package org.georgep7n.lendingclub.analyze
+package org.georgep7n.fintastech.lendingclub.analyze
 
 import java.util.zip.*;
 import au.com.bytecode.opencsv.CSVReader

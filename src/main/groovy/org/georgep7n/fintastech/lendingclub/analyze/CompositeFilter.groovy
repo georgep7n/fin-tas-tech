@@ -1,9 +1,9 @@
-package org.georgep7n.lendingclub.analyze
+package org.georgep7n.fintastech.lendingclub.analyze
 
 /**
  *
  */
-class CompositeLoanFilter implements LoanFilter {
+class CompositeFilter implements LoanFilter {
 
     private List<LoanFilter> filters = []
 

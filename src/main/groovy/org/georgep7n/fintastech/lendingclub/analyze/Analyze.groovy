@@ -1,4 +1,4 @@
-package org.georgep7n.lendingclub.analyze
+package org.georgep7n.fintastech.lendingclub.analyze
 
 import java.text.NumberFormat
 
@@ -41,7 +41,7 @@ public class Analyze {
         LOAN_FILTERS.add(termFilter)
         LOAN_FILTERS.add(new IntRateFilter(7.0))
         LOAN_FILTERS.add(new InqLast6MonthsFilter(0))
-        LOAN_FILTERS.add(new DTILoanFilter(20.0));
+        LOAN_FILTERS.add(new DTIRatioFilter(20.0));
         def purposeFilter = new PurposeFilter()
         purposeFilter.add("car")
         purposeFilter.add("wedding")
@@ -75,7 +75,7 @@ public class Analyze {
 //            filter.add((String) state)
 //            LOAN_FILTERS.add(filter)
 //        }
-        CompositeLoanFilter allFilters = new CompositeLoanFilter()
+        CompositeFilter allFilters = new CompositeFilter()
         LOAN_FILTERS.each { loanFilter -> allFilters.add(loanFilter) }
         LOAN_FILTERS.add(allFilters)
         List<Run> runs = []
