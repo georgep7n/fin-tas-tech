@@ -9,6 +9,7 @@ class CompositeLoanFilter implements LoanFilter {
 
     void add(LoanFilter loanFilter) { filters.add(loanFilter) }
 
+    @Override
     boolean include(Loan loan) {
         def result = true
         filters.each { loanFilter ->
@@ -19,6 +20,7 @@ class CompositeLoanFilter implements LoanFilter {
         result
     }
 
+    @Override
     String getDescription() {
         StringBuffer description = new StringBuffer()
         filters.each { loanFilter ->

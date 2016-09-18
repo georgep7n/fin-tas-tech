@@ -2,16 +2,13 @@ package org.georgep7n.lendingclub.analyze
 
 /**
  */
-class IntRateFilter implements LoanFilter {
-    private def intRate
+class IntRateFilter extends NumberFilter {
 
-    IntRateFilter(double intRate) {
-        this.intRate = intRate
-    }
     @Override boolean include(Loan loan) {
-        loan.intRate >= intRate
+        loan.intRate >= value
     }
+
     @Override String getDescription() {
-        "interest rate >= " + intRate
+        "interest rate >= " + value
     }
 }

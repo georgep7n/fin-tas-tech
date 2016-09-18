@@ -2,15 +2,13 @@ package org.georgep7n.lendingclub.analyze
 
 /**
  */
-class DTILoanFilter implements LoanFilter {
-    private def dti
-    DTILoanFilter(double dti) {
-        this.dti = dti
-    }
+class DTILoanFilter extends NumberFilter {
+
     @Override boolean include(Loan loan) {
-        loan.dti <= dti
+        loan.dti <= value
     }
+
     @Override String getDescription() {
-        "debt-to-income ratio <= " + dti
+        "debt-to-income ratio <= " + value
     }
 }

@@ -2,16 +2,12 @@ package org.georgep7n.lendingclub.analyze
 
 /**
  */
-class InqLast6MonthsFilter implements LoanFilter {
-    private def inqLast6Months
+class InqLast6MonthsFilter extends NumberFilter {
 
-    InqLast6MonthsFilter(int inqLast6Months) {
-        this.inqLast6Months = inqLast6Months
-    }
     @Override boolean include(Loan loan) {
-        loan.inq_last_6mths <= inqLast6Months
+        loan.inq_last_6mths <= value
     }
     @Override String getDescription() {
-        "inquiries in the last 6 months <= " + inqLast6Months
+        "inquiries in the last 6 months <= " + value
     }
 }
