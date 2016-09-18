@@ -5,7 +5,7 @@ import java.text.NumberFormat
 /**
  *
  */
-public class Analyze {
+public class Main {
 
     static class Run {
         LoanFilter loanFilter
@@ -39,9 +39,9 @@ public class Analyze {
         TermFilter termFilter = new TermFilter()
         termFilter.add("36 months");
         LOAN_FILTERS.add(termFilter)
-        LOAN_FILTERS.add(new IntRateFilter(7.0))
-        LOAN_FILTERS.add(new InqLast6MonthsFilter(0))
-        LOAN_FILTERS.add(new DTIRatioFilter(20.0));
+        LOAN_FILTERS.add(new IntRateFilter().set(7.0))
+        LOAN_FILTERS.add(new InqLast6MonthsFilter().set(0))
+        LOAN_FILTERS.add(new DTIRatioFilter().set(20.0))
         def purposeFilter = new PurposeFilter()
         purposeFilter.add("car")
         purposeFilter.add("wedding")
@@ -85,10 +85,12 @@ public class Analyze {
             def purposes = new TreeSet()
             def statuses = new TreeSet()
             def grades = new TreeSet()
+            def states = new TreeSet()
             def countsByPurpose = [:]
             def countsByStatus = [:]
             def countsByPurposeAndStatus = [:]
             def countsByGradeAndStatus = [:]
+            def countsByStateAndStatus = [:]
             println("Analyzing with filter: " + loanFilter.getDescription().toUpperCase())
             def loans = LoanSlurper.filter(allLoans, loanFilter)
             run.numLoans = loans.size()
@@ -101,6 +103,7 @@ public class Analyze {
                     purposes.add(loan.purpose)
                     statuses.add(loan.loan_status)
                     grades.add(loan.grade)
+                    states.add(loan.state)
                 };
                 purposes.each { purpose -> countsByPurpose[purpose] = 0 }
                 statuses.each { status -> countsByStatus[status] = 0 }
@@ -114,6 +117,11 @@ public class Analyze {
                         countsByGradeAndStatus[grade + "." + status] = 0
                     }
                 }
+                states.each { state ->
+                    status.each { status ->
+                        countsByStateAndStatus[state + "." + status] = 0
+                    }
+                }
                 loans.each { loan ->
                     def count = countsByPurpose[loan.purpose]
                     countsByPurpose[loan.purpose] = count + 1
@@ -123,6 +131,7 @@ public class Analyze {
                     countsByPurposeAndStatus[loan.purpose + "." + loan.loan_status] = count + 1
                     count = countsByGradeAndStatus[loan.grade + "." + loan.loan_status]
                     countsByGradeAndStatus[loan.grade + "." + loan.loan_status] = count + 1
+                    countsByStateAndStatus[loan.state + "." + loan.addr_state] = count + 1
                 }
                 //println(countsByPurpose)
                 //println(countsByStatus)
@@ -142,6 +151,11 @@ public class Analyze {
                 // println(countsByGradeAndStatus)
                 grades.each { grade ->
                     statsByFactorAndStatus(countsByGradeAndStatus, (String) grade)
+                }
+                println("Fully Paid by State")
+                // println(countsByGradeAndStatus)
+                states.each { state ->
+                    statsByFactorAndStatus(countsByStateAndStatus, (String) state)
                 }
                 println("---------------------")
             }

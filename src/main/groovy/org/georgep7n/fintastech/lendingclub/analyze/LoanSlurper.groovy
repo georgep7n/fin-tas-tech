@@ -101,7 +101,7 @@ class LoanSlurper {
 
     private static void slurpCSVFile(List<Loan> loans, String csvFileName) throws IOException {
         CSVReader reader = new CSVReader(new InputStreamReader(
-          new GZIPInputStream(Analyze.class.getResourceAsStream("/lendingclub/" + csvFileName))))
+          new GZIPInputStream(LoanSlurper.class.getResourceAsStream("/lendingclub/" + csvFileName))))
         reader.readNext() // descriptor row
         reader.readNext() // header row
         String[] columns
