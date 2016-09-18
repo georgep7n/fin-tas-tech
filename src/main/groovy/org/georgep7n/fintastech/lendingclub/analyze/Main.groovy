@@ -131,6 +131,7 @@ public class Main {
                     countsByPurposeAndStatus[loan.purpose + "." + loan.loan_status] = count + 1
                     count = countsByGradeAndStatus[loan.grade + "." + loan.loan_status]
                     countsByGradeAndStatus[loan.grade + "." + loan.loan_status] = count + 1
+                    count = countsByStateAndStatus[loan.state + "." + loan.loan_status]
                     countsByStateAndStatus[loan.state + "." + loan.loan_status] = count + 1
                 }
                 //println(countsByPurpose)
@@ -153,7 +154,7 @@ public class Main {
                     statsByFactorAndStatus(countsByGradeAndStatus, (String) grade)
                 }
                 println("Fully Paid by State")
-                // println(countsByGradeAndStatus)
+                println("State,% Fully Paid,Total")
                 states.each { state ->
                     statsByFactorAndStatus(countsByStateAndStatus, (String) state)
                 }
@@ -171,6 +172,7 @@ public class Main {
         def numChargedOff = countsByFactorAndStatus[factor + "." + Loan.CHARGED_OFF_LOAN_STATUS]
         def numFullyPaid = countsByFactorAndStatus[factor + "." + Loan.FULLY_PAID_LOAN_STATUS]
         def numTotal = numChargedOff + numFullyPaid
-        println " $factor: ${PCT_FORMAT.format((100 * ((numFullyPaid / numTotal) as double)))}% of $numTotal"
+        def value = PCT_FORMAT.format(100 * ((numFullyPaid / numTotal) as double))
+        println "$factor,$value,$numTotal"
     }
 }
