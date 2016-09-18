@@ -118,7 +118,7 @@ public class Main {
                     }
                 }
                 states.each { state ->
-                    status.each { status ->
+                    statuses.each { status ->
                         countsByStateAndStatus[state + "." + status] = 0
                     }
                 }
@@ -131,7 +131,7 @@ public class Main {
                     countsByPurposeAndStatus[loan.purpose + "." + loan.loan_status] = count + 1
                     count = countsByGradeAndStatus[loan.grade + "." + loan.loan_status]
                     countsByGradeAndStatus[loan.grade + "." + loan.loan_status] = count + 1
-                    countsByStateAndStatus[loan.state + "." + loan.addr_state] = count + 1
+                    countsByStateAndStatus[loan.state + "." + loan.loan_status] = count + 1
                 }
                 //println(countsByPurpose)
                 //println(countsByStatus)
