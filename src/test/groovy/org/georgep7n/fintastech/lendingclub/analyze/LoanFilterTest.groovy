@@ -18,4 +18,18 @@ class LoanFilterTest extends Specification {
             false1 == false
     }
 
+    def "GradeFilter.include"() {
+        setup:
+            Loan loan = new Loan()
+            LoanFilter filter = new GradeFilter().add("A").add("B").add("C")
+        when:
+            loan.grade = "A"; def true1 = filter.include(loan)
+            loan.grade = "B"; def true2 = filter.include(loan)
+            loan.grade = "D"; def false1 = filter.include(loan)
+        then:
+            true1 == true
+            true2 == true
+            false1 == false
+    }
+
 }
