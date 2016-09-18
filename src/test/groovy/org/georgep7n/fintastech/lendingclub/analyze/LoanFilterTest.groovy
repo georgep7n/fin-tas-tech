@@ -13,9 +13,7 @@ class LoanFilterTest extends Specification {
             loan.dti = 9; def true2 = filter.include(loan)
             loan.dti = 11; def false1 = filter.include(loan)
         then:
-            true1 == true
-            true2 == true
-            false1 == false
+            true1; true2; !false1
     }
 
     def "GradeFilter.include"() {
@@ -27,9 +25,7 @@ class LoanFilterTest extends Specification {
             loan.grade = "B"; def true2 = filter.include(loan)
             loan.grade = "D"; def false1 = filter.include(loan)
         then:
-            true1 == true
-            true2 == true
-            false1 == false
+            true1; true2; !false1
     }
 
 }
