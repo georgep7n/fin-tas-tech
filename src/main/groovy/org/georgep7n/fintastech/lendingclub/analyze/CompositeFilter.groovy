@@ -3,25 +3,16 @@ package org.georgep7n.fintastech.lendingclub.analyze
 /**
  *
  */
-class CompositeFilter implements LoanFilter {
+abstract class CompositeFilter implements LoanFilter {
 
-    private List<LoanFilter> filters = []
+    protected List<LoanFilter> filters = []
 
-    void add(LoanFilter loanFilter) { filters.add(loanFilter) }
-
-    @Override
-    boolean include(Loan loan) {
-        def result = true
-        filters.each { loanFilter ->
-            if (!loanFilter.include(loan)) {
-                result = false
-            }
-        }
-        result
+    CompositeFilter add(LoanFilter loanFilter) {
+        filters.add(loanFilter)
+        this
     }
 
-    @Override
-    String getDescription() {
+    @Override final String getDescription() {
         StringBuffer description = new StringBuffer()
         filters.each { loanFilter ->
             description.append(loanFilter.getDescription()).append(", ")

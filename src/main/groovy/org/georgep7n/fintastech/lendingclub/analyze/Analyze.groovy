@@ -75,7 +75,7 @@ public class Analyze {
 //            filter.add((String) state)
 //            LOAN_FILTERS.add(filter)
 //        }
-        CompositeFilter allFilters = new CompositeFilter()
+        AndFilter allFilters = new AndFilter()
         LOAN_FILTERS.each { loanFilter -> allFilters.add(loanFilter) }
         LOAN_FILTERS.add(allFilters)
         List<Run> runs = []
