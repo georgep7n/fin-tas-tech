@@ -6,8 +6,9 @@ abstract class NumberFilter implements LoanFilter {
 
     double value
 
-    void set(double value) {
+    NumberFilter set(double value) {
         this.value = value
+        this
     }
 
 }
