@@ -5,22 +5,25 @@ package org.georgep7n.lendingclub.analyze
  */
 class CompositeLoanFilter implements LoanFilter {
 
-    private List<LoanFilter> loanFilters = []
-    void add(LoanFilter loanFilter) { loanFilters.add(loanFilter); }
+    private List<LoanFilter> filters = []
+
+    void add(LoanFilter loanFilter) { filters.add(loanFilter) }
+
     boolean include(Loan loan) {
         def result = true
-        loanFilters.each { loanFilter ->
+        filters.each { loanFilter ->
             if (!loanFilter.include(loan)) {
                 result = false
             }
         }
         result
     }
+
     String getDescription() {
-        StringBuffer description = new StringBuffer("");
-        loanFilters.each { loanFilter ->
+        StringBuffer description = new StringBuffer()
+        filters.each { loanFilter ->
             description.append(loanFilter.getDescription()).append(", ")
         }
-        return description.toString()
+        description.toString()
     }
 }
