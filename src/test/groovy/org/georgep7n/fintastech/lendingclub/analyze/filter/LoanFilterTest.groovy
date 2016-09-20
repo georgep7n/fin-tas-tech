@@ -8,7 +8,8 @@ class LoanFilterTest extends Specification {
     def "DTIRatioFilter.include"() {
         setup:
             Loan loan = new Loan()
-            LoanFilter filter = new DTIRatioFilter().set(10)
+            LoanFilter filter = new ClosureFilter(
+                { l -> l.dti <= 10 }, "debt to income ratio <= 10")
         when:
             loan.dti = 10; def result1 = filter.include(loan)
             loan.dti = 9; def result2 = filter.include(loan)
@@ -56,7 +57,8 @@ class LoanFilterTest extends Specification {
         setup:
             Loan loan = new Loan()
             AndFilter filter = new AndFilter()
-            filter.add(new IntRateFilter().set(10))
+            filter.add(new ClosureFilter(
+                { l -> l.intRate >= 10 }, "interest rate >= 10"))
         when:
             loan.intRate = 8
             def result = filter.include(loan)
@@ -68,7 +70,8 @@ class LoanFilterTest extends Specification {
         setup:
             Loan loan = new Loan()
             AndFilter filter = new AndFilter()
-            filter.add(new IntRateFilter().set(10))
+            filter.add(new ClosureFilter(
+                { l -> l.intRate >= 10 }, "interest rate >= 10"))
             filter.add(new ElementFilter("grade").add("A"))
         when:
             loan.intRate = 12
@@ -82,7 +85,8 @@ class LoanFilterTest extends Specification {
         setup:
             Loan loan = new Loan()
             AndFilter filter = new AndFilter()
-            filter.add(new IntRateFilter().set(10))
+            filter.add(new ClosureFilter(
+                { l -> l.intRate >= 10 }, "interest rate >= 10"))
             filter.add(new ElementFilter("grade").add("B"))
         when:
             loan.intRate = 12
