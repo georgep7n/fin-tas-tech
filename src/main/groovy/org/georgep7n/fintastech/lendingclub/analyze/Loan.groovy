@@ -8,6 +8,7 @@ class Loan {
     static def CHARGED_OFF_LOAN_STATUS = "Charged Off"
     static def DEFAULT_LOAN_STATUS = "Default"
 
+    def desc
     def state
     def grade
     def intRate

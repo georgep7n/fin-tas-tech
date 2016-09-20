@@ -21,7 +21,7 @@ class LoanFilterTest extends Specification {
     def "GradeFilter.include"() {
         setup:
             Loan loan = new Loan()
-            LoanFilter filter = new GradeFilter().add("A").add("B").add("C")
+            LoanFilter filter = new ElementFilter("grade").add("A").add("B").add("C")
         when:
             loan.grade = "A"; def true1 = filter.include(loan)
             loan.grade = "B"; def true2 = filter.include(loan)
@@ -68,7 +68,7 @@ class LoanFilterTest extends Specification {
             Loan loan = new Loan()
             AndFilter filter = new AndFilter()
             filter.add(new IntRateFilter().set(10))
-            filter.add(new GradeFilter().add("A"))
+            filter.add(new ElementFilter("grade").add("A"))
         when:
             loan.intRate = 12
             loan.grade = "A"
@@ -82,7 +82,7 @@ class LoanFilterTest extends Specification {
             Loan loan = new Loan()
             AndFilter filter = new AndFilter()
             filter.add(new IntRateFilter().set(10))
-            filter.add(new GradeFilter().add("B"))
+            filter.add(new ElementFilter("grade").add("B"))
         when:
             loan.intRate = 12
             loan.grade = "A"

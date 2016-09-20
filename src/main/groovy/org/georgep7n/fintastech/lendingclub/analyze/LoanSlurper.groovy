@@ -66,6 +66,7 @@ class LoanSlurper {
      55 = verification_status_joint
      */
 
+    private static final def DESCRIPTION_INDEX = 19
     private static final def STATE_INDEX = 23
     private static final def TERM_INDEX = 5
     private static final def INT_RATE_INDEX = 6
@@ -109,6 +110,7 @@ class LoanSlurper {
         while ((columns = reader.readNext()) != null) {
             line++;
             def loan = new Loan()
+            loan.desc = columns[DESCRIPTION_INDEX].trim()
             loan.state = columns[STATE_INDEX].trim()
             loan.term = columns[TERM_INDEX].trim()
             loan.intRate = Double.valueOf(columns[INT_RATE_INDEX].tokenize("%").get(0))

@@ -22,7 +22,7 @@ public class Main {
     static List<LoanFilter> LOAN_FILTERS = []
     static {
         LOAN_FILTERS.add(new NoFilter())
-        StateFilter stateFilter = new StateFilter()
+        ElementFilter stateFilter = new ElementFilter("state")
         def goodStates = [
                 "DC", "WY", "MT", "WV", "NH", "CO", "AK", "TX", "SC", "OR", "SD", "CT", "UT", "MA",
                 "IL", "WA", "GA", "KS", "AZ", "WI", "CA", "DE", "MN"
@@ -33,16 +33,16 @@ public class Main {
 //        ]
         goodStates.each { state -> stateFilter.add(state) }
         LOAN_FILTERS.add(stateFilter)
-        GradeFilter gradeFilter = new GradeFilter()
+        ElementFilter gradeFilter = new ElementFilter("grade")
         gradeFilter.add("A").add("B").add("C").add("D").add("E").add("F").add("G")
         LOAN_FILTERS.add(gradeFilter)
-        TermFilter termFilter = new TermFilter()
+        ElementFilter termFilter = new ElementFilter("term")
         termFilter.add("36 months");
         LOAN_FILTERS.add(termFilter)
         LOAN_FILTERS.add(new IntRateFilter().set(7.0))
         LOAN_FILTERS.add(new InqLast6MonthsFilter().set(0))
         LOAN_FILTERS.add(new DTIRatioFilter().set(20.0))
-        def purposeFilter = new PurposeFilter()
+        def purposeFilter = new ElementFilter("purpose")
         purposeFilter.add("car")
         purposeFilter.add("wedding")
         purposeFilter.add("major_purchase")
@@ -53,7 +53,7 @@ public class Main {
         purposeFilter.add("house")
         purposeFilter.add("debt_consolidation")
         LOAN_FILTERS.add(purposeFilter)
-        def homeOwnershipFilter = new HomeOwnershipFilter()
+        def homeOwnershipFilter = new ElementFilter("home_ownership")
         homeOwnershipFilter.add("MORTGAGE")
         LOAN_FILTERS.add(homeOwnershipFilter)
 //        homeOwnershipFilter = new HomeOwnershipFilter()

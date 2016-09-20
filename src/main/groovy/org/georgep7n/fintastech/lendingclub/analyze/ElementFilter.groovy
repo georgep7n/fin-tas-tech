@@ -2,16 +2,25 @@ package org.georgep7n.fintastech.lendingclub.analyze
 
 /**
  */
-abstract class ElementFilter implements LoanFilter {
+final class ElementFilter implements LoanFilter {
 
+    private String propertyName
     final List<String> elements = []
 
-    final ElementFilter add(String element) {
+    ElementFilter(String propertyName) {
+        this.propertyName = propertyName
+    }
+
+    ElementFilter add(String element) {
         elements.add(element)
         this
     }
 
-    final @Override String getDescription() {
+    @Override boolean include(Loan loan) {
+        elements.contains(loan[propertyName])
+    }
+
+    @Override String getDescription() {
         elements.toString()
     }
 }
