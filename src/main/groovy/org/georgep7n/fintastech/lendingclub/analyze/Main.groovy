@@ -39,9 +39,12 @@ public class Main {
         ElementFilter termFilter = new ElementFilter("term")
         termFilter.add("36 months");
         LOAN_FILTERS.add(termFilter)
-        LOAN_FILTERS.add(new IntRateFilter().set(7.0))
-        LOAN_FILTERS.add(new InqLast6MonthsFilter().set(0))
-        LOAN_FILTERS.add(new DTIRatioFilter().set(20.0))
+        LOAN_FILTERS.add(new ClosureFilter(
+            { loan -> loan.intRate >= 7 }, "interest rate >= 7"))
+        LOAN_FILTERS.add(new ClosureFilter(
+            { loan -> loan.inq_last_6mths <= 0 }, "inquiries in the last 6 months <= 0"))
+        LOAN_FILTERS.add(new ClosureFilter(
+            { loan -> loan.dti <= 20 }, "debt to income ratio <= 20"))
         def purposeFilter = new ElementFilter("purpose")
         purposeFilter.add("car")
         purposeFilter.add("wedding")
