@@ -1,6 +1,7 @@
 package org.georgep7n.fintastech.lendingclub.analyze
 
 import java.text.NumberFormat
+import org.georgep7n.fintastech.lendingclub.analyze.filter.*
 
 /**
  *
@@ -95,7 +96,7 @@ public class Main {
             def countsByGradeAndStatus = [:]
             def countsByStateAndStatus = [:]
             println("Analyzing with filter: " + loanFilter.getDescription().toUpperCase())
-            def loans = LoanSlurper.filter(allLoans, loanFilter)
+            def loans = filter(allLoans, loanFilter)
             run.numLoans = loans.size()
             println("$run.numLoans loans to analyze")
             if (run.numLoans < 500) {
@@ -177,5 +178,15 @@ public class Main {
         def numTotal = numChargedOff + numFullyPaid
         def value = PCT_FORMAT.format(100 * ((numFullyPaid / numTotal) as double))
         println "$factor,$value,$numTotal"
+    }
+
+    static List<Loan> filter(List<Loan> loans, LoanFilter loanFilter) {
+        def filteredLoans = []
+        loans.each { loan ->
+            if (loanFilter.include(loan)) {
+                filteredLoans.add(loan)
+            }
+        }
+        return filteredLoans
     }
 }

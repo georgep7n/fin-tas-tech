@@ -79,16 +79,6 @@ class LoanSlurper {
     private static final def INQUIRIES_IN_LAST_SIX_MONTHS = 27
     private static final def MONTHS_SINCE_LAST_DELINQ = 28
 
-    static List<Loan> filter(List<Loan> loans, LoanFilter loanFilter) {
-        def filteredLoans = []
-        loans.each { loan ->
-            if (loanFilter.include(loan)) {
-                filteredLoans.add(loan)
-            }
-        }
-        return filteredLoans
-    }
-
     static List<Loan> slurpCSVFiles() {
         def loans = []
         slurpCSVFile(loans, "LoanStats3a.csv.gz")
