@@ -1,5 +1,7 @@
 package org.georgep7n.fintastech.lendingclub.analyze
 
+import java.util.zip.*;
+import au.com.bytecode.opencsv.CSVReader
 import java.text.NumberFormat
 import org.georgep7n.fintastech.lendingclub.analyze.filter.*
 
@@ -20,10 +22,10 @@ public class Main {
         PCT_FORMAT.setMaximumFractionDigits(1);
     }
 
-    static List<LoanFilter> LOAN_FILTERS = []
+    static def LOAN_FILTERS = []
     static {
         LOAN_FILTERS.add(new NoFilter())
-        ElementFilter stateFilter = new ElementFilter("state")
+        ElementFilter stateFilter = new ElementFilter(STATE_INDEX)
         def goodStates = [
                 "DC", "WY", "MT", "WV", "NH", "CO", "AK", "TX", "SC", "OR", "SD", "CT", "UT", "MA",
                 "IL", "WA", "GA", "KS", "AZ", "WI", "CA", "DE", "MN"
@@ -34,19 +36,19 @@ public class Main {
 //        ]
         goodStates.each { state -> stateFilter.add(state) }
         LOAN_FILTERS.add(stateFilter)
-        ElementFilter gradeFilter = new ElementFilter("grade")
+        ElementFilter gradeFilter = new ElementFilter(GRADE_INDEX)
         gradeFilter.add("A").add("B").add("C").add("D").add("E").add("F").add("G")
         LOAN_FILTERS.add(gradeFilter)
-        ElementFilter termFilter = new ElementFilter("term")
-        termFilter.add("36 months");
+        ElementFilter termFilter = new ElementFilter(TERM_INDEX)
+        termFilter.add("36 months")
         LOAN_FILTERS.add(termFilter)
         LOAN_FILTERS.add(new ClosureFilter(
-            { loan -> loan.intRate >= 7 }, "interest rate >= 7"))
+            { loan -> get(loan, INT_RATE_INDEX) >= 7 }, "interest rate >= 7"))
         LOAN_FILTERS.add(new ClosureFilter(
-            { loan -> loan.inq_last_6mths <= 0 }, "inquiries in the last 6 months <= 0"))
+            { loan -> get(loan, INQUIRIES_IN_LAST_SIX_MONTHS) <= 0 }, "inquiries in the last 6 months <= 0"))
         LOAN_FILTERS.add(new ClosureFilter(
-            { loan -> loan.dti <= 20 }, "debt to income ratio <= 20"))
-        def purposeFilter = new ElementFilter("purpose")
+            { loan -> get(loan, DEBT_TO_INCOME_RATIO) <= 20 }, "debt to income ratio <= 20"))
+        def purposeFilter = new ElementFilter(PURPOSE_INDEX)
         purposeFilter.add("car")
         purposeFilter.add("wedding")
         purposeFilter.add("major_purchase")
@@ -57,7 +59,7 @@ public class Main {
         purposeFilter.add("house")
         purposeFilter.add("debt_consolidation")
         LOAN_FILTERS.add(purposeFilter)
-        def homeOwnershipFilter = new ElementFilter("home_ownership")
+        def homeOwnershipFilter = new ElementFilter(HOME_OWNERSHIP_INDEX)
         homeOwnershipFilter.add("MORTGAGE")
         LOAN_FILTERS.add(homeOwnershipFilter)
 //        homeOwnershipFilter = new HomeOwnershipFilter()
@@ -69,7 +71,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        def allLoans = LoanSlurper.slurpCSVFiles()
+        def allLoans = slurpCSVFiles()
 //        TreeSet<String> allStates = new TreeSet<>()
 //        allLoans.each { loan ->
 //            allStates.add((String) loan.state)
@@ -104,10 +106,10 @@ public class Main {
             } else {
                 runs.add(run)
                 loans.each { loan ->
-                    purposes.add(loan.purpose)
-                    statuses.add(loan.loan_status)
-                    grades.add(loan.grade)
-                    states.add(loan.state)
+                    purposes.add(loan[PURPOSE_INDEX])
+                    statuses.add(loan[LOAN_STATUS_INDEX])
+                    grades.add(loan[GRADE_INDEX])
+                    states.add(loan[STATE_INDEX])
                 };
                 purposes.each { purpose -> countsByPurpose[purpose] = 0 }
                 statuses.each { status -> countsByStatus[status] = 0 }
@@ -127,24 +129,24 @@ public class Main {
                     }
                 }
                 loans.each { loan ->
-                    def count = countsByPurpose[loan.purpose]
-                    countsByPurpose[loan.purpose] = count + 1
-                    count = countsByStatus[loan.loan_status]
-                    countsByStatus[loan.loan_status] = count + 1
-                    count = countsByPurposeAndStatus[loan.purpose + "." + loan.loan_status]
-                    countsByPurposeAndStatus[loan.purpose + "." + loan.loan_status] = count + 1
-                    count = countsByGradeAndStatus[loan.grade + "." + loan.loan_status]
-                    countsByGradeAndStatus[loan.grade + "." + loan.loan_status] = count + 1
-                    count = countsByStateAndStatus[loan.state + "." + loan.loan_status]
-                    countsByStateAndStatus[loan.state + "." + loan.loan_status] = count + 1
+                    def count = countsByPurpose[loan[PURPOSE_INDEX]]
+                    countsByPurpose[loan[PURPOSE_INDEX]] = count + 1
+                    count = countsByStatus[loan[LOAN_STATUS_INDEX]]
+                    countsByStatus[loan[LOAN_STATUS_INDEX]] = count + 1
+                    count = countsByPurposeAndStatus[loan[PURPOSE_INDEX] + "." + loan[LOAN_STATUS_INDEX]]
+                    countsByPurposeAndStatus[loan[PURPOSE_INDEX] + "." + loan[LOAN_STATUS_INDEX]] = count + 1
+                    count = countsByGradeAndStatus[loan[GRADE_INDEX] + "." + loan[LOAN_STATUS_INDEX]]
+                    countsByGradeAndStatus[loan[GRADE_INDEX] + "." + loan[LOAN_STATUS_INDEX]] = count + 1
+                    count = countsByStateAndStatus[loan[STATE_INDEX] + "." + loan[LOAN_STATUS_INDEX]]
+                    countsByStateAndStatus[loan[STATE_INDEX] + "." + loan[LOAN_STATUS_INDEX]] = count + 1
                 }
                 //println(countsByPurpose)
                 //println(countsByStatus)
-                def numChargedOff = countsByStatus[Loan.CHARGED_OFF_LOAN_STATUS]
-                def numFullyPaid = countsByStatus[Loan.FULLY_PAID_LOAN_STATUS]
+                def numChargedOff = countsByStatus[CHARGED_OFF_LOAN_STATUS]
+                def numFullyPaid = countsByStatus[FULLY_PAID_LOAN_STATUS]
                 def numTotal = numChargedOff + numFullyPaid
                 run.score = 100 * ((numFullyPaid / numTotal) as double)
-                println("Overall " + Loan.FULLY_PAID_LOAN_STATUS + ": " + PCT_FORMAT.format(run.score) + "%")
+                println("Overall " + FULLY_PAID_LOAN_STATUS + ": " + PCT_FORMAT.format(run.score) + "%")
                 //println(countsByPurposeAndStatus)
                 println()
                 println("Fully Paid by Purpose")
@@ -173,14 +175,14 @@ public class Main {
     }
 
     private static void statsByFactorAndStatus(countsByFactorAndStatus, String factor) {
-        def numChargedOff = countsByFactorAndStatus[factor + "." + Loan.CHARGED_OFF_LOAN_STATUS]
-        def numFullyPaid = countsByFactorAndStatus[factor + "." + Loan.FULLY_PAID_LOAN_STATUS]
+        def numChargedOff = countsByFactorAndStatus[factor + "." + CHARGED_OFF_LOAN_STATUS]
+        def numFullyPaid = countsByFactorAndStatus[factor + "." + FULLY_PAID_LOAN_STATUS]
         def numTotal = numChargedOff + numFullyPaid
         def value = PCT_FORMAT.format(100 * ((numFullyPaid / numTotal) as double))
         println "$factor,$value,$numTotal"
     }
 
-    static List<Loan> filter(List<Loan> loans, LoanFilter loanFilter) {
+    static Object filter(loans, loanFilter) {
         def filteredLoans = []
         loans.each { loan ->
             if (loanFilter.include(loan)) {
@@ -188,5 +190,133 @@ public class Main {
             }
         }
         return filteredLoans
+    }
+
+    /**
+     0 = id
+     1 = member_id
+     2 = loan_amnt
+     3 = funded_amnt
+     4 = funded_amnt_inv
+     5 = term
+     6 = int_rate
+     7 = installment
+     8 = grade
+     9 = sub_grade
+     10 = emp_title
+     11 = emp_length
+     12 = home_ownership
+     13 = annual_inc
+     14 = verification_status
+     15 = issue_d
+     16 = loan_status
+     17 = pymnt_plan
+     18 = url
+     19 = desc
+     20 = purpose
+     21 = title
+     22 = zip_code
+     23 = addr_state
+     24 = inqLast6Months
+     25 = delinq_2yrs
+     26 = earliest_cr_line
+     27 = inq_last_6mths
+     28 = mths_since_last_delinq
+     29 = mths_since_last_record
+     30 = open_acc
+     31 = pub_rec
+     32 = revol_bal
+     33 = revol_util
+     34 = total_acc
+     35 = initial_list_status
+     36 = out_prncp
+     37 = out_prncp_inv
+     38 = total_pymnt
+     39 = total_pymnt_inv
+     40 = total_rec_prncp
+     41 = total_rec_int
+     42 = total_rec_late_fee
+     43 = recoveries
+     44 = collection_recovery_fee
+     45 = last_pymnt_d
+     46 = last_pymnt_amnt
+     47 = next_pymnt_d
+     48 = last_credit_pull_d
+     49 = collections_12_mths_ex_med
+     50 = mths_since_last_major_derog
+     51 = policy_code
+     52 = application_type
+     53 = annual_inc_joint
+     54 = dti_joint
+     55 = verification_status_joint
+     */
+
+    static final def DESCRIPTION_INDEX = 19
+    static final def STATE_INDEX = 23
+    static final def TERM_INDEX = 5
+    static final def INT_RATE_INDEX = 6
+    static final def GRADE_INDEX = 8
+    static final def HOME_OWNERSHIP_INDEX = 12
+    static final def LOAN_STATUS_INDEX = 16
+    static final def PURPOSE_INDEX = 20
+    static final def DEBT_TO_INCOME_RATIO = 24
+    static final def DELINQ_LAST_2_YEARS = 25
+    static final def INQUIRIES_IN_LAST_SIX_MONTHS = 27
+    static final def MONTHS_SINCE_LAST_DELINQ = 28
+
+    static def FULLY_PAID_LOAN_STATUS = "Fully Paid"
+    static def CHARGED_OFF_LOAN_STATUS = "Charged Off"
+    static def DEFAULT_LOAN_STATUS = "Default"
+
+    static Object slurpCSVFiles() {
+        def loans = []
+        slurpCSVFile(loans, "LoanStats3a.csv.gz")
+        slurpCSVFile(loans, "LoanStats3b.csv.gz")
+        slurpCSVFile(loans, "LoanStats3c.csv.gz")
+        slurpCSVFile(loans, "LoanStats3d.csv.gz")
+        slurpCSVFile(loans, "LoanStats2016Q1.csv.gz")
+        slurpCSVFile(loans, "LoanStats2016Q2.csv.gz")
+        return loans
+    }
+
+    private static void slurpCSVFile(loans, csvFileName) throws IOException {
+        CSVReader reader = new CSVReader(new InputStreamReader(
+          new GZIPInputStream(Main.class.getResourceAsStream("/lendingclub/" + csvFileName))))
+        reader.readNext() // descriptor row
+        reader.readNext() // header row
+        def loan
+        int line = 2;
+        while ((loan = reader.readNext()) != null) {
+            line++;
+            loan[DESCRIPTION_INDEX] = loan[DESCRIPTION_INDEX].trim()
+            loan[STATE_INDEX] = loan[STATE_INDEX].trim()
+            loan[TERM_INDEX]= loan[TERM_INDEX].trim()
+            if ((FULLY_PAID_LOAN_STATUS == loan[LOAN_STATUS_INDEX] ||
+                    CHARGED_OFF_LOAN_STATUS == loan[LOAN_STATUS_INDEX] ||
+                    DEFAULT_LOAN_STATUS == loan[LOAN_STATUS_INDEX])) {
+                if (DEFAULT_LOAN_STATUS == loan[LOAN_STATUS_INDEX])
+                    // Count defaults as charge-offs.
+                    loan[LOAN_STATUS_INDEX] = CHARGED_OFF_LOAN_STATUS
+                loans.add(loan)
+            }
+        }
+    }
+
+    static Object get(loan, propertyIndex) {
+        def result = loan[propertyIndex].trim()
+        switch (propertyIndex) {
+            case INQUIRIES_IN_LAST_SIX_MONTHS:
+            case DELINQ_LAST_2_YEARS:
+            case MONTHS_SINCE_LAST_DELINQ:
+                result = Integer.valueOf(loan[propertyIndex])
+                break
+            case DEBT_TO_INCOME_RATIO:
+                result = Double.valueOf(loan[propertyIndex])
+                break
+            case INT_RATE_INDEX:
+                result = Double.valueOf(loan[propertyIndex].tokenize("%").get(0))
+                break
+        }
+        return result
     }
 }

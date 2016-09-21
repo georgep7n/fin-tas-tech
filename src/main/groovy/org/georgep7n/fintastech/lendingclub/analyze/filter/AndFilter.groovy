@@ -7,7 +7,7 @@ import org.georgep7n.fintastech.lendingclub.analyze.*
 class AndFilter extends CompositeFilter {
 
     @Override
-    boolean include(Loan loan) {
+    boolean include(loan) {
         if (filters.size() == 0) {
             return false
         }

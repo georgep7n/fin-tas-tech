@@ -1,19 +1,19 @@
 package org.georgep7n.fintastech.lendingclub.analyze.filter
 
 import spock.lang.Specification
-import org.georgep7n.fintastech.lendingclub.analyze.*
+import static org.georgep7n.fintastech.lendingclub.analyze.Main.*
 
 class LoanFilterTest extends Specification {
 
     def "DTIRatioFilter.include"() {
         setup:
-            Loan loan = new Loan()
+            def loan = []
             LoanFilter filter = new ClosureFilter(
-                { l -> l.dti <= 10 }, "debt to income ratio <= 10")
+                { l -> l[DEBT_TO_INCOME_RATIO] <= 10 }, "debt to income ratio <= 10")
         when:
-            loan.dti = 10; def result1 = filter.include(loan)
-            loan.dti = 9; def result2 = filter.include(loan)
-            loan.dti = 11; def result3 = filter.include(loan)
+            loan[DEBT_TO_INCOME_RATIO] = 10; def result1 = filter.include(loan)
+            loan[DEBT_TO_INCOME_RATIO] = 9; def result2 = filter.include(loan)
+            loan[DEBT_TO_INCOME_RATIO] = 11; def result3 = filter.include(loan)
         then:
             result1 == true
             result2 == true
@@ -22,19 +22,22 @@ class LoanFilterTest extends Specification {
 
     def "GradeFilter.include"() {
         setup:
-            Loan loan = new Loan()
-            LoanFilter filter = new ElementFilter("grade").add("A").add("B").add("C")
+            def loan = []
+            LoanFilter filter = new ElementFilter(GRADE_INDEX).add("A").add("B").add("C")
         when:
-            loan.grade = "A"; def true1 = filter.include(loan)
-            loan.grade = "B"; def true2 = filter.include(loan)
-            loan.grade = "D"; def false1 = filter.include(loan)
+            loan[GRADE_INDEX] = "A";
+            def true1 = filter.include(loan)
+            loan[GRADE_INDEX] = "B";
+            def true2 = filter.include(loan)
+            loan[GRADE_INDEX] = "D";
+            def false1 = filter.include(loan)
         then:
             true1; true2; !false1
     }
 
     def "AndFilter.include with no filters"() {
         setup:
-            Loan loan = new Loan()
+            def loan = []
             LoanFilter filter = new AndFilter()
         when:
             def result = filter.include(loan)
@@ -44,7 +47,7 @@ class LoanFilterTest extends Specification {
 
     def "AndFilter.include with one filter which returns true"() {
         setup:
-            Loan loan = new Loan()
+            def loan = []
             AndFilter filter = new AndFilter()
             filter.add(new NoFilter())
         when:
@@ -55,12 +58,12 @@ class LoanFilterTest extends Specification {
 
     def "AndFilter.include with one filter which returns false"() {
         setup:
-            Loan loan = new Loan()
+            def loan = []
             AndFilter filter = new AndFilter()
             filter.add(new ClosureFilter(
-                { l -> l.intRate >= 10 }, "interest rate >= 10"))
+                { l -> l[INT_RATE_INDEX] >= 10 }, "interest rate >= 10"))
         when:
-            loan.intRate = 8
+            loan[INT_RATE_INDEX] = 8
             def result = filter.include(loan)
         then:
             result == false
@@ -68,14 +71,14 @@ class LoanFilterTest extends Specification {
 
     def "AndFilter.include with two filters which both return true"() {
         setup:
-            Loan loan = new Loan()
+            def loan = []
             AndFilter filter = new AndFilter()
             filter.add(new ClosureFilter(
-                { l -> l.intRate >= 10 }, "interest rate >= 10"))
-            filter.add(new ElementFilter("grade").add("A"))
+                { l -> l[INT_RATE_INDEX] >= 10 }, "interest rate >= 10"))
+            filter.add(new ElementFilter(GRADE_INDEX).add("A"))
         when:
-            loan.intRate = 12
-            loan.grade = "A"
+            loan[INT_RATE_INDEX] = 12
+            loan[GRADE_INDEX] = "A"
             def result = filter.include(loan)
         then:
             result == true
@@ -83,14 +86,14 @@ class LoanFilterTest extends Specification {
 
     def "AndFilter.include with two filters, one returning true"() {
         setup:
-            Loan loan = new Loan()
+            def loan = []
             AndFilter filter = new AndFilter()
             filter.add(new ClosureFilter(
-                { l -> l.intRate >= 10 }, "interest rate >= 10"))
-            filter.add(new ElementFilter("grade").add("B"))
+                { l -> l[INT_RATE_INDEX] >= 10 }, "interest rate >= 10"))
+            filter.add(new ElementFilter(GRADE_INDEX).add("B"))
         when:
-            loan.intRate = 12
-            loan.grade = "A"
+            loan[INT_RATE_INDEX] = 12
+            loan[GRADE_INDEX] = "A"
             def result = filter.include(loan)
         then:
             result == false

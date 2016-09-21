@@ -6,6 +6,6 @@ import org.georgep7n.fintastech.lendingclub.analyze.*
  *
  */
 interface LoanFilter {
-    boolean include(Loan loan)
+    boolean include(loan)
     String getDescription()
 }

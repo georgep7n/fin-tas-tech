@@ -5,11 +5,11 @@ import org.georgep7n.fintastech.lendingclub.analyze.*
  */
 final class ElementFilter implements LoanFilter {
 
-    private String propertyName
+    private def propertyIndex
     final List<String> elements = []
 
-    ElementFilter(String propertyName) {
-        this.propertyName = propertyName
+    ElementFilter(propertyIndex) {
+        this.propertyIndex = propertyIndex
     }
 
     ElementFilter add(String element) {
@@ -17,8 +17,8 @@ final class ElementFilter implements LoanFilter {
         this
     }
 
-    @Override boolean include(Loan loan) {
-        elements.contains(loan[propertyName])
+    @Override boolean include(loan) {
+        elements.contains(loan[propertyIndex])
     }
 
     @Override String getDescription() {
