@@ -8,17 +8,17 @@ class Loan {
     static def CHARGED_OFF_LOAN_STATUS = "Charged Off"
     static def DEFAULT_LOAN_STATUS = "Default"
 
-    def desc
-    def state
-    def grade
-    def intRate
-    def term
-    def purpose
-    def loan_status
-    def inq_last_6mths
-    def mths_since_last_delinq
-    def delinq_2yrs
-    def dti
-    def home_ownership
+    private def desc
+    private def state
+    private def grade
+    private def intRate
+    private def term
+    private def purpose
+    private def loan_status
+    private def inq_last_6mths
+    private def mths_since_last_delinq
+    private def delinq_2yrs
+    private def dti
+    private def home_ownership
     @Override public String toString() { return state + " " + purpose + " " + grade + " " + term + " " + loan_status }
 }

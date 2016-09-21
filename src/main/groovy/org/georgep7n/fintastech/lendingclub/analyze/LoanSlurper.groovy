@@ -66,18 +66,18 @@ class LoanSlurper {
      55 = verification_status_joint
      */
 
-    private static final def DESCRIPTION_INDEX = 19
-    private static final def STATE_INDEX = 23
-    private static final def TERM_INDEX = 5
-    private static final def INT_RATE_INDEX = 6
-    private static final def GRADE_INDEX = 8
-    private static final def HOME_OWNERSHIP_INDEX = 12
-    private static final def LOAN_STATUS_INDEX = 16
-    private static final def PURPOSE_INDEX = 20
-    private static final def DEBT_TO_INCOME_RATIO = 24
-    private static final def DELINQ_LAST_2_YEARS = 25
-    private static final def INQUIRIES_IN_LAST_SIX_MONTHS = 27
-    private static final def MONTHS_SINCE_LAST_DELINQ = 28
+    static final def DESCRIPTION_INDEX = 19
+    static final def STATE_INDEX = 23
+    static final def TERM_INDEX = 5
+    static final def INT_RATE_INDEX = 6
+    static final def GRADE_INDEX = 8
+    static final def HOME_OWNERSHIP_INDEX = 12
+    static final def LOAN_STATUS_INDEX = 16
+    static final def PURPOSE_INDEX = 20
+    static final def DEBT_TO_INCOME_RATIO = 24
+    static final def DELINQ_LAST_2_YEARS = 25
+    static final def INQUIRIES_IN_LAST_SIX_MONTHS = 27
+    static final def MONTHS_SINCE_LAST_DELINQ = 28
 
     static List<Loan> slurpCSVFiles() {
         def loans = []
