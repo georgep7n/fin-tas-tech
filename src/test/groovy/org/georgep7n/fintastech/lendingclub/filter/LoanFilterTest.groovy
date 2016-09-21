@@ -1,7 +1,7 @@
-package org.georgep7n.fintastech.lendingclub.analyze.filter
+package org.georgep7n.fintastech.lendingclub.filter
 
 import spock.lang.Specification
-import static org.georgep7n.fintastech.lendingclub.analyze.Analyze.*
+import static org.georgep7n.fintastech.lendingclub.Analyze.*
 
 class LoanFilterTest extends Specification {
 

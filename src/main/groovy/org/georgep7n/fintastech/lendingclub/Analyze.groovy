@@ -1,9 +1,9 @@
-package org.georgep7n.fintastech.lendingclub.analyze
+package org.georgep7n.fintastech.lendingclub
 
 import java.util.zip.*;
 import au.com.bytecode.opencsv.CSVReader
 import java.text.NumberFormat
-import org.georgep7n.fintastech.lendingclub.analyze.filter.*
+import org.georgep7n.fintastech.lendingclub.filter.*
 
 /**
  *

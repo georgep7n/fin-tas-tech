@@ -1,4 +1,4 @@
-package org.georgep7n.fintastech.lendingclub.analyze.filter
+package org.georgep7n.fintastech.lendingclub.filter
 
 /**
  */

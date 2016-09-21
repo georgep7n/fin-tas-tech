@@ -2,7 +2,7 @@
 apply plugin: 'groovy'
 apply plugin: 'application'
 
-mainClassName = "org.georgep7n.fintastech.lendingclub.analyze.Analyze"
+mainClassName = "org.georgep7n.fintastech.lendingclub.Analyze"
 
 // In this section you declare where to find the dependencies of your project
 repositories {
