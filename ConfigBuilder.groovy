@@ -17,11 +17,14 @@ ElementFilter termFilter = new ElementFilter(TERM_INDEX)
 termFilter.add("36 months")
 LOAN_FILTERS.add(termFilter)
 LOAN_FILTERS.add(new ClosureFilter(
-    { loan -> toNum(loan, INT_RATE_INDEX) >= 7 }, "interest rate >= 7"))
+    { loan -> toNum(loan, INT_RATE_INDEX) >= 7 },
+    "interest rate >= 7"))
 LOAN_FILTERS.add(new ClosureFilter(
-    { loan -> toNum(loan, INQUIRIES_IN_LAST_SIX_MONTHS) <= 0 }, "inquiries in the last 6 months <= 0"))
+    { loan -> toNum(loan, INQUIRIES_IN_LAST_SIX_MONTHS) <= 0 },
+    "inquiries in the last 6 months <= 0"))
 LOAN_FILTERS.add(new ClosureFilter(
-    { loan -> toNum(loan, DEBT_TO_INCOME_RATIO) <= 20 }, "debt to income ratio <= 20"))
+    { loan -> toNum(loan, DEBT_TO_INCOME_RATIO) <= 20 },
+    "debt to income ratio <= 20"))
 def purposeFilter = new ElementFilter(PURPOSE_INDEX)
 purposeFilter.add("car")
 purposeFilter.add("wedding")
