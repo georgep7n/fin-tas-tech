@@ -59,15 +59,15 @@ public class Analyze {
         def homeOwnershipFilter = new ElementFilter(HOME_OWNERSHIP_INDEX)
         homeOwnershipFilter.add("MORTGAGE")
         LOAN_FILTERS.add(homeOwnershipFilter)
+        AndFilter allFilters = new AndFilter()
+        LOAN_FILTERS.each { loanFilter -> allFilters.add(loanFilter) }
+        LOAN_FILTERS.add(allFilters)
     }
 
     public static void main(String[] args) throws IOException {
         def configFileName = args[0]
         println configFileName
         def allLoans = slurpCSVFiles()
-        AndFilter allFilters = new AndFilter()
-        LOAN_FILTERS.each { loanFilter -> allFilters.add(loanFilter) }
-        LOAN_FILTERS.add(allFilters)
         List<Run> runs = []
         LOAN_FILTERS.each { loanFilter ->
             Run run = new Run()
