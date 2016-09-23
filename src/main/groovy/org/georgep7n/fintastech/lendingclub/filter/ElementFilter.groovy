@@ -1,4 +1,5 @@
 package org.georgep7n.fintastech.lendingclub.filter
+import org.georgep7n.fintastech.lendingclub.*
 
 /**
  */
