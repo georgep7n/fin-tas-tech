@@ -4,4 +4,4 @@ gradlew clean
 gradlew build
 pushd build/distributions
 tar -xf *.tar
-fintastech/bin/fintastech
+fintastech/bin/fintastech config.groovy

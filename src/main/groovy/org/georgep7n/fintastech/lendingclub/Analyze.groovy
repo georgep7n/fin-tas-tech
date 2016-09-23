@@ -8,7 +8,7 @@ import org.georgep7n.fintastech.lendingclub.filter.*
 /**
  *
  */
-public class Main {
+public class Analyze {
 
     static class Run {
         LoanFilter loanFilter
@@ -62,6 +62,8 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
+        def configFileName = args[0]
+        println configFileName
         def allLoans = slurpCSVFiles()
         AndFilter allFilters = new AndFilter()
         LOAN_FILTERS.each { loanFilter -> allFilters.add(loanFilter) }
@@ -260,7 +262,7 @@ public class Main {
 
     private static void slurpCSVFile(loans, csvFileName) throws IOException {
         CSVReader reader = new CSVReader(new InputStreamReader(
-          new GZIPInputStream(Main.class.getResourceAsStream("/lendingclub/" + csvFileName))))
+          new GZIPInputStream(Analyze.class.getResourceAsStream("/lendingclub/" + csvFileName))))
         reader.readNext() // descriptor row
         reader.readNext() // header row
         def loan
