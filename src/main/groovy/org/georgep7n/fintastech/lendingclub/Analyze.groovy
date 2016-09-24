@@ -159,6 +159,12 @@ public final class Analyze {
                 loan.attrs[i] = loanCSV[i].trim()
             }
             // change numeric loan attrs to numbers as needed, etc.
+            loan.attrs[INT_RATE_INDEX] = Double.valueOf(
+                loan.attrs[INT_RATE_INDEX].tokenize("%").get(0))
+            loan.attrs[INQUIRIES_IN_LAST_SIX_MONTHS] = Double.valueOf(
+                loan.attrs[INQUIRIES_IN_LAST_SIX_MONTHS])
+            loan.attrs[DEBT_TO_INCOME_RATIO] = Double.valueOf(
+                loan.attrs[DEBT_TO_INCOME_RATIO])
 
             // only include fully paid and charged off loans in the subsequent analysis.
             if ((FULLY_PAID_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX] ||
@@ -171,16 +177,5 @@ public final class Analyze {
                 loans.add(loan)
             }
         }
-    }
-
-    // do this above...
-    static Double toNum(loan, propertyIndex) {
-        def value = loan.attrs[propertyIndex]
-        switch (propertyIndex) {
-            case INT_RATE_INDEX:
-                value = value.tokenize("%").get(0)
-                break
-        }
-        Double.valueOf(value)
     }
 }
