@@ -83,4 +83,25 @@ public final class Loan {
     static final def DEFAULT_LOAN_STATUS = "Default"
 
     final def attrs = []
+
+    Loan() {}
+    Loan(loanCSV) {
+        // copy everything as is from csv after trimming string
+        for (int i = 0; i<loanCSV.length; i++) {
+            attrs[i] = loanCSV[i].trim()
+        }
+        // change numeric loan attrs to numbers as needed, etc.
+        attrs[INT_RATE_INDEX] = Double.valueOf(
+            attrs[INT_RATE_INDEX].tokenize("%").get(0))
+        attrs[INQUIRIES_IN_LAST_SIX_MONTHS] = Double.valueOf(
+            attrs[INQUIRIES_IN_LAST_SIX_MONTHS])
+        attrs[DEBT_TO_INCOME_RATIO] = Double.valueOf(
+            attrs[DEBT_TO_INCOME_RATIO])
+
+        // modify attrs as needed
+        if (DEFAULT_LOAN_STATUS == attrs[LOAN_STATUS_INDEX]) {
+            // Count defaults as charge-offs.
+            attrs[LOAN_STATUS_INDEX] = CHARGED_OFF_LOAN_STATUS
+        }
+    }
 }

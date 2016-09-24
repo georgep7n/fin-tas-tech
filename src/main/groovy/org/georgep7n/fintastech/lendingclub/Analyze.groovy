@@ -153,27 +153,11 @@ public final class Analyze {
         reader.readNext() // header row
         def loanCSV
         while ((loanCSV = reader.readNext()) != null) {
-            def loan = new Loan()
-            // copy everything as is from csv after trimming string
-            for (int i = 0; i<loanCSV.length; i++) {
-                loan.attrs[i] = loanCSV[i].trim()
-            }
-            // change numeric loan attrs to numbers as needed, etc.
-            loan.attrs[INT_RATE_INDEX] = Double.valueOf(
-                loan.attrs[INT_RATE_INDEX].tokenize("%").get(0))
-            loan.attrs[INQUIRIES_IN_LAST_SIX_MONTHS] = Double.valueOf(
-                loan.attrs[INQUIRIES_IN_LAST_SIX_MONTHS])
-            loan.attrs[DEBT_TO_INCOME_RATIO] = Double.valueOf(
-                loan.attrs[DEBT_TO_INCOME_RATIO])
-
+            def loan = new Loan(loanCSV)
             // only include fully paid and charged off loans in the subsequent analysis.
             if ((FULLY_PAID_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX] ||
                     CHARGED_OFF_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX] ||
                     DEFAULT_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX])) {
-                if (DEFAULT_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX]) {
-                    // Count defaults as charge-offs.
-                    loan.attrs[LOAN_STATUS_INDEX] = CHARGED_OFF_LOAN_STATUS
-                }
                 loans.add(loan)
             }
         }
