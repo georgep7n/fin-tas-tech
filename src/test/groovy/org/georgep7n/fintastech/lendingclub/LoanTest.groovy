@@ -10,10 +10,10 @@ class LoanTest extends Specification {
         setup:
             def loan = new Loan()
         when:
-            loan.attrs[DEBT_TO_INCOME_RATIO] = 10
+            loan.attrs[DEBT_TO_INCOME_RATIO_INDEX] = 10
         then:
-            loan.attrs[DEBT_TO_INCOME_RATIO] - 1 == 9
-            loan.attrs[DEBT_TO_INCOME_RATIO] + 1 == 11
+            loan.attrs[DEBT_TO_INCOME_RATIO_INDEX] - 1 == 9
+            loan.attrs[DEBT_TO_INCOME_RATIO_INDEX] + 1 == 11
     }
 
 }

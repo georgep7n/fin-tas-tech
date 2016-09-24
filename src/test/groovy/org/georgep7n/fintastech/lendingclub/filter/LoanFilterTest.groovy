@@ -10,11 +10,11 @@ class LoanFilterTest extends Specification {
         setup:
             def loan = new Loan()
             LoanFilter filter = new ClosureFilter(
-                { l -> l.attrs[DEBT_TO_INCOME_RATIO] <= 10 }, "debt to income ratio <= 10")
+                { l -> l.attrs[DEBT_TO_INCOME_RATIO_INDEX] <= 10 }, "debt to income ratio <= 10")
         when:
-            loan.attrs[DEBT_TO_INCOME_RATIO] = 10; def result1 = filter.include(loan)
-            loan.attrs[DEBT_TO_INCOME_RATIO] = 9; def result2 = filter.include(loan)
-            loan.attrs[DEBT_TO_INCOME_RATIO] = 11; def result3 = filter.include(loan)
+            loan.attrs[DEBT_TO_INCOME_RATIO_INDEX] = 10; def result1 = filter.include(loan)
+            loan.attrs[DEBT_TO_INCOME_RATIO_INDEX] = 9; def result2 = filter.include(loan)
+            loan.attrs[DEBT_TO_INCOME_RATIO_INDEX] = 11; def result3 = filter.include(loan)
         then:
             result1 == true
             result2 == true

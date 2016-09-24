@@ -21,10 +21,10 @@ LOAN_FILTERS.add(new ClosureFilter(
     { loan -> loan.attrs[INT_RATE_INDEX] >= 7 },
     "interest rate >= 7"))
 LOAN_FILTERS.add(new ClosureFilter(
-    { loan -> loan.attrs[INQUIRIES_IN_LAST_SIX_MONTHS] <= 0 },
+    { loan -> loan.attrs[INQUIRIES_IN_LAST_SIX_MONTHS_INDEX] <= 0 },
     "inquiries in the last 6 months <= 0"))
 LOAN_FILTERS.add(new ClosureFilter(
-    { loan -> loan.attrs[DEBT_TO_INCOME_RATIO] <= 20 },
+    { loan -> loan.attrs[DEBT_TO_INCOME_RATIO_INDEX] <= 20 },
     "debt to income ratio <= 20"))
 def purposeFilter = new ElementFilter(PURPOSE_INDEX)
 purposeFilter.add("car")

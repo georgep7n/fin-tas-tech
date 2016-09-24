@@ -73,35 +73,52 @@ public final class Loan {
     static final def HOME_OWNERSHIP_INDEX = 12
     static final def LOAN_STATUS_INDEX = 16
     static final def PURPOSE_INDEX = 20
-    static final def DEBT_TO_INCOME_RATIO = 24
-    static final def DELINQ_LAST_2_YEARS = 25
-    static final def INQUIRIES_IN_LAST_SIX_MONTHS = 27
-    static final def MONTHS_SINCE_LAST_DELINQ = 28
+    static final def DEBT_TO_INCOME_RATIO_INDEX = 24
+    static final def DELINQ_LAST_2_YEARS_INDEX = 25
+    static final def INQUIRIES_IN_LAST_SIX_MONTHS_INDEX = 27
+    static final def MONTHS_SINCE_LAST_DELINQ_INDEX = 28
 
     static final def FULLY_PAID_LOAN_STATUS = "Fully Paid"
     static final def CHARGED_OFF_LOAN_STATUS = "Charged Off"
     static final def DEFAULT_LOAN_STATUS = "Default"
 
+    static final def ATTR_TYPE_STRING = "string"
+    static final def ATTR_TYPE_NUMBER = "number"
+    static final class AttrDescriptor {
+        def index
+        def type
+        def csvPreProcessor
+        AttrDescriptor(index, type) { this.index = index; this.type = type }
+    }
+
+    static final def attrDescriptors = []
+    static {
+        AttrDescriptor desc = new AttrDescriptor(INT_RATE_INDEX, ATTR_TYPE_NUMBER)
+        desc.csvPreProcessor = { value -> value.tokenize("%").get(0) }
+        attrDescriptors[INT_RATE_INDEX] = desc
+        desc = new AttrDescriptor(INQUIRIES_IN_LAST_SIX_MONTHS_INDEX, ATTR_TYPE_NUMBER)
+        attrDescriptors[INQUIRIES_IN_LAST_SIX_MONTHS_INDEX] = desc
+        desc = new AttrDescriptor(DEBT_TO_INCOME_RATIO_INDEX, ATTR_TYPE_NUMBER)
+        attrDescriptors[DEBT_TO_INCOME_RATIO_INDEX] = desc
+        desc = new AttrDescriptor(LOAN_STATUS_INDEX, ATTR_TYPE_STRING)
+        desc.csvPreProcessor = { value -> value == DEFAULT_LOAN_STATUS ? CHARGED_OFF_LOAN_STATUS : value }
+        attrDescriptors[LOAN_STATUS_INDEX] = desc
+    }
     final def attrs = []
 
     Loan() {}
     Loan(loanCSV) {
-        // copy everything as is from csv after trimming string
         for (int i = 0; i<loanCSV.length; i++) {
+            // copy attribute as-is after trimming
             attrs[i] = loanCSV[i].trim()
-        }
-        // change numeric loan attrs to numbers as needed, etc.
-        attrs[INT_RATE_INDEX] = Double.valueOf(
-            attrs[INT_RATE_INDEX].tokenize("%").get(0))
-        attrs[INQUIRIES_IN_LAST_SIX_MONTHS] = Double.valueOf(
-            attrs[INQUIRIES_IN_LAST_SIX_MONTHS])
-        attrs[DEBT_TO_INCOME_RATIO] = Double.valueOf(
-            attrs[DEBT_TO_INCOME_RATIO])
-
-        // modify attrs as needed
-        if (DEFAULT_LOAN_STATUS == attrs[LOAN_STATUS_INDEX]) {
-            // Count defaults as charge-offs.
-            attrs[LOAN_STATUS_INDEX] = CHARGED_OFF_LOAN_STATUS
+            // call csv preprocessor for attr if there is one
+            if (attrDescriptors[i] != null && attrDescriptors[i].csvPreProcessor != null) {
+                attrs[i] = attrDescriptors[i].csvPreProcessor.call(attrs[i])
+            }
+            // convert to number if needed
+            if (attrDescriptors[i] != null && attrDescriptors[i].type == ATTR_TYPE_NUMBER) {
+                attrs[i] = Double.valueOf(attrs[i])
+            }
         }
     }
 }
