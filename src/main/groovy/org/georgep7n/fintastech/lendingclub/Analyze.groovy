@@ -3,11 +3,12 @@ package org.georgep7n.fintastech.lendingclub
 import java.util.zip.*;
 import au.com.bytecode.opencsv.CSVReader
 import java.text.NumberFormat
+import static org.georgep7n.fintastech.lendingclub.Loan.*
 
 /**
  *
  */
-public class Analyze {
+public final class Analyze {
 
     static class Run {
         LoanFilter loanFilter
@@ -51,10 +52,10 @@ public class Analyze {
             } else {
                 runs.add(run)
                 loans.each { loan ->
-                    purposes.add(loan[PURPOSE_INDEX])
-                    statuses.add(loan[LOAN_STATUS_INDEX])
-                    grades.add(loan[GRADE_INDEX])
-                    states.add(loan[STATE_INDEX])
+                    purposes.add(loan.attrs[PURPOSE_INDEX])
+                    statuses.add(loan.attrs[LOAN_STATUS_INDEX])
+                    grades.add(loan.attrs[GRADE_INDEX])
+                    states.add(loan.attrs[STATE_INDEX])
                 };
                 purposes.each { purpose -> countsByPurpose[purpose] = 0 }
                 statuses.each { status -> countsByStatus[status] = 0 }
@@ -74,16 +75,16 @@ public class Analyze {
                     }
                 }
                 loans.each { loan ->
-                    def count = countsByPurpose[loan[PURPOSE_INDEX]]
-                    countsByPurpose[loan[PURPOSE_INDEX]] = count + 1
-                    count = countsByStatus[loan[LOAN_STATUS_INDEX]]
-                    countsByStatus[loan[LOAN_STATUS_INDEX]] = count + 1
-                    count = countsByPurposeAndStatus[loan[PURPOSE_INDEX] + "." + loan[LOAN_STATUS_INDEX]]
-                    countsByPurposeAndStatus[loan[PURPOSE_INDEX] + "." + loan[LOAN_STATUS_INDEX]] = count + 1
-                    count = countsByGradeAndStatus[loan[GRADE_INDEX] + "." + loan[LOAN_STATUS_INDEX]]
-                    countsByGradeAndStatus[loan[GRADE_INDEX] + "." + loan[LOAN_STATUS_INDEX]] = count + 1
-                    count = countsByStateAndStatus[loan[STATE_INDEX] + "." + loan[LOAN_STATUS_INDEX]]
-                    countsByStateAndStatus[loan[STATE_INDEX] + "." + loan[LOAN_STATUS_INDEX]] = count + 1
+                    def count = countsByPurpose[loan.attrs[PURPOSE_INDEX]]
+                    countsByPurpose[loan.attrs[PURPOSE_INDEX]] = count + 1
+                    count = countsByStatus[loan.attrs[LOAN_STATUS_INDEX]]
+                    countsByStatus[loan.attrs[LOAN_STATUS_INDEX]] = count + 1
+                    count = countsByPurposeAndStatus[loan.attrs[PURPOSE_INDEX] + "." + loan.attrs[LOAN_STATUS_INDEX]]
+                    countsByPurposeAndStatus[loan.attrs[PURPOSE_INDEX] + "." + loan.attrs[LOAN_STATUS_INDEX]] = count + 1
+                    count = countsByGradeAndStatus[loan.attrs[GRADE_INDEX] + "." + loan.attrs[LOAN_STATUS_INDEX]]
+                    countsByGradeAndStatus[loan.attrs[GRADE_INDEX] + "." + loan.attrs[LOAN_STATUS_INDEX]] = count + 1
+                    count = countsByStateAndStatus[loan.attrs[STATE_INDEX] + "." + loan.attrs[LOAN_STATUS_INDEX]]
+                    countsByStateAndStatus[loan.attrs[STATE_INDEX] + "." + loan.attrs[LOAN_STATUS_INDEX]] = count + 1
                 }
 
                 def numChargedOff = countsByStatus[CHARGED_OFF_LOAN_STATUS]
@@ -134,82 +135,6 @@ public class Analyze {
         return filteredLoans
     }
 
-    /**
-     0 = id
-     1 = member_id
-     2 = loan_amnt
-     3 = funded_amnt
-     4 = funded_amnt_inv
-     5 = term
-     6 = int_rate
-     7 = installment
-     8 = grade
-     9 = sub_grade
-     10 = emp_title
-     11 = emp_length
-     12 = home_ownership
-     13 = annual_inc
-     14 = verification_status
-     15 = issue_d
-     16 = loan_status
-     17 = pymnt_plan
-     18 = url
-     19 = desc
-     20 = purpose
-     21 = title
-     22 = zip_code
-     23 = addr_state
-     24 = inqLast6Months
-     25 = delinq_2yrs
-     26 = earliest_cr_line
-     27 = inq_last_6mths
-     28 = mths_since_last_delinq
-     29 = mths_since_last_record
-     30 = open_acc
-     31 = pub_rec
-     32 = revol_bal
-     33 = revol_util
-     34 = total_acc
-     35 = initial_list_status
-     36 = out_prncp
-     37 = out_prncp_inv
-     38 = total_pymnt
-     39 = total_pymnt_inv
-     40 = total_rec_prncp
-     41 = total_rec_int
-     42 = total_rec_late_fee
-     43 = recoveries
-     44 = collection_recovery_fee
-     45 = last_pymnt_d
-     46 = last_pymnt_amnt
-     47 = next_pymnt_d
-     48 = last_credit_pull_d
-     49 = collections_12_mths_ex_med
-     50 = mths_since_last_major_derog
-     51 = policy_code
-     52 = application_type
-     53 = annual_inc_joint
-     54 = dti_joint
-     55 = verification_status_joint
-     */
-
-    static final def DESCRIPTION_INDEX = 19
-    static final def STATE_INDEX = 23
-    static final def TERM_INDEX = 5
-    static final def INT_RATE_INDEX = 6
-    static final def GRADE_INDEX = 8
-    static final def HOME_OWNERSHIP_INDEX = 12
-    static final def LOAN_STATUS_INDEX = 16
-    static final def PURPOSE_INDEX = 20
-    static final def DEBT_TO_INCOME_RATIO = 24
-    static final def DELINQ_LAST_2_YEARS = 25
-    static final def INQUIRIES_IN_LAST_SIX_MONTHS = 27
-    static final def MONTHS_SINCE_LAST_DELINQ = 28
-
-    static def FULLY_PAID_LOAN_STATUS = "Fully Paid"
-    static def CHARGED_OFF_LOAN_STATUS = "Charged Off"
-    static def DEFAULT_LOAN_STATUS = "Default"
-
     static Object slurpCSVFiles() {
         def loans = []
         slurpCSVFile(loans, "LoanStats3a.csv.gz")
@@ -226,25 +151,31 @@ public class Analyze {
           new GZIPInputStream(Analyze.class.getResourceAsStream("/lendingclub/" + csvFileName))))
         reader.readNext() // descriptor row
         reader.readNext() // header row
-        def loan
-        while ((loan = reader.readNext()) != null) {
-            for (int i = 0; i<loan.length; i++) {
-                loan[i] = loan[i].trim()
+        def loanCSV
+        while ((loanCSV = reader.readNext()) != null) {
+            def loan = new Loan()
+            // copy everything as is from csv after trimming string
+            for (int i = 0; i<loanCSV.length; i++) {
+                loan.attrs[i] = loanCSV[i].trim()
             }
-            if ((FULLY_PAID_LOAN_STATUS == loan[LOAN_STATUS_INDEX] ||
-                    CHARGED_OFF_LOAN_STATUS == loan[LOAN_STATUS_INDEX] ||
-                    DEFAULT_LOAN_STATUS == loan[LOAN_STATUS_INDEX])) {
-                if (DEFAULT_LOAN_STATUS == loan[LOAN_STATUS_INDEX]) {
+            // change numeric loan attrs to numbers as needed, etc.
+
+            // only include fully paid and charged off loans in the subsequent analysis.
+            if ((FULLY_PAID_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX] ||
+                    CHARGED_OFF_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX] ||
+                    DEFAULT_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX])) {
+                if (DEFAULT_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX]) {
                     // Count defaults as charge-offs.
-                    loan[LOAN_STATUS_INDEX] = CHARGED_OFF_LOAN_STATUS
+                    loan.attrs[LOAN_STATUS_INDEX] = CHARGED_OFF_LOAN_STATUS
                 }
                 loans.add(loan)
             }
         }
     }
 
+    // do this above...
     static Double toNum(loan, propertyIndex) {
-        def value = loan[propertyIndex]
+        def value = loan.attrs[propertyIndex]
         switch (propertyIndex) {
             case INT_RATE_INDEX:
                 value = value.tokenize("%").get(0)

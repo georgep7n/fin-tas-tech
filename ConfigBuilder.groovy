@@ -1,4 +1,5 @@
 import org.georgep7n.fintastech.lendingclub.filter.*
+import static org.georgep7n.fintastech.lendingclub.Loan.*
 import static org.georgep7n.fintastech.lendingclub.Analyze.*
 
 LOAN_FILTERS.add(new NoFilter())

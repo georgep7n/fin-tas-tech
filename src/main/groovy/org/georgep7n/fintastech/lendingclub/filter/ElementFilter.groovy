@@ -18,7 +18,7 @@ final class ElementFilter implements LoanFilter {
     }
 
     @Override boolean include(loan) {
-        elements.contains(loan[propertyIndex])
+        elements.contains(loan.attrs[propertyIndex])
     }
 
     @Override String getDescription() {
