@@ -17,6 +17,7 @@ LOAN_FILTERS.add(gradeFilter)
 ElementFilter termFilter = new ElementFilter(TERM_INDEX)
 termFilter.add("36 months")
 LOAN_FILTERS.add(termFilter)
+//LOAN_FILTERS.add(new EvalFilter("loan.attrs[INT_RATE_INDEX] >= 7"))
 LOAN_FILTERS.add(new ClosureFilter(
     { loan -> loan.attrs[INT_RATE_INDEX] >= 7 },
     "interest rate >= 7"))

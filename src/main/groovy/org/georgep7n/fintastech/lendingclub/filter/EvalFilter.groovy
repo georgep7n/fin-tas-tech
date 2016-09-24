@@ -12,7 +12,7 @@ class EvalFilter implements LoanFilter {
     }
 
     @Override boolean include(loan) {
-        def scriptlet = "import static org.georgep7n.fintastech.lendingclub.Analyze.*; $expr"
+        def scriptlet = "import static org.georgep7n.fintastech.lendingclub.Loan.*; $expr"
         Eval.me("loan", loan, scriptlet)
     }
     @Override String getDescription() {

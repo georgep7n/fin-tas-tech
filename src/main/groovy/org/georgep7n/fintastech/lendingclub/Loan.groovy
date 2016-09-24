@@ -87,21 +87,21 @@ public final class Loan {
     static final class AttrDescriptor {
         def index
         def type
-        def csvPreProcessor
+        def parser
         AttrDescriptor(index, type) { this.index = index; this.type = type }
     }
 
     static final def attrDescriptors = []
     static {
         AttrDescriptor desc = new AttrDescriptor(INT_RATE_INDEX, ATTR_TYPE_NUMBER)
-        desc.csvPreProcessor = { value -> value.tokenize("%").get(0) }
+        desc.parser = { value -> value.tokenize("%").get(0) }
         attrDescriptors[INT_RATE_INDEX] = desc
         desc = new AttrDescriptor(INQUIRIES_IN_LAST_SIX_MONTHS_INDEX, ATTR_TYPE_NUMBER)
         attrDescriptors[INQUIRIES_IN_LAST_SIX_MONTHS_INDEX] = desc
         desc = new AttrDescriptor(DEBT_TO_INCOME_RATIO_INDEX, ATTR_TYPE_NUMBER)
         attrDescriptors[DEBT_TO_INCOME_RATIO_INDEX] = desc
         desc = new AttrDescriptor(LOAN_STATUS_INDEX, ATTR_TYPE_STRING)
-        desc.csvPreProcessor = { value -> value == DEFAULT_LOAN_STATUS ? CHARGED_OFF_LOAN_STATUS : value }
+        desc.parser = { value -> value == DEFAULT_LOAN_STATUS ? CHARGED_OFF_LOAN_STATUS : value }
         attrDescriptors[LOAN_STATUS_INDEX] = desc
     }
     final def attrs = []
@@ -111,9 +111,9 @@ public final class Loan {
         for (int i = 0; i<loanCSV.length; i++) {
             // copy attribute as-is after trimming
             attrs[i] = loanCSV[i].trim()
-            // call csv preprocessor for attr if there is one
-            if (attrDescriptors[i] != null && attrDescriptors[i].csvPreProcessor != null) {
-                attrs[i] = attrDescriptors[i].csvPreProcessor.call(attrs[i])
+            // call csv parser for attr if there is one
+            if (attrDescriptors[i] != null && attrDescriptors[i].parser != null) {
+                attrs[i] = attrDescriptors[i].parser.call(attrs[i])
             }
             // convert to number if needed
             if (attrDescriptors[i] != null && attrDescriptors[i].type == ATTR_TYPE_NUMBER) {
