@@ -23,7 +23,6 @@ public final class Analyze {
     }
 
     private static final def LOAN_FILTERS = []
-    private static final def LOAN_CSV_DATA = [] // raw data in csv format
     private static final def LOANS = [] // loan instances created from raw data
 
     public static void main(String[] args) throws IOException {
@@ -138,14 +137,23 @@ public final class Analyze {
     }
 
     static void slurpLoans() {
-        def start = System.currentTimeMillis()
         slurpLoansFromCSVFile("LoanStats3a.csv.gz")
         slurpLoansFromCSVFile("LoanStats3b.csv.gz")
         slurpLoansFromCSVFile("LoanStats3c.csv.gz")
         slurpLoansFromCSVFile("LoanStats3d.csv.gz")
         slurpLoansFromCSVFile("LoanStats2016Q1.csv.gz")
         slurpLoansFromCSVFile("LoanStats2016Q2.csv.gz")
-        LOAN_CSV_DATA.each({ loanCSV ->
+    }
+
+    private static void slurpLoansFromCSVFile(csvFileName) throws IOException {
+        def start = System.currentTimeMillis()
+        def count=0
+        CSVReader reader = new CSVReader(new InputStreamReader(
+            new GZIPInputStream(Analyze.class.getResourceAsStream("/lendingclub/" + csvFileName))))
+        reader.readNext() // descriptor row
+        reader.readNext() // header row
+        def loanCSV
+        while ((loanCSV = reader.readNext()) != null) {
             def loan = new Loan(loanCSV)
             // only include fully paid and charged off loans in the subsequent analysis.
             if ((FULLY_PAID_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX] ||
@@ -153,19 +161,9 @@ public final class Analyze {
                     DEFAULT_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX])) {
                 LOANS.add(loan)
             }
-        })
-        def stop = System.currentTimeMillis()
-        println (LOANS.size() + " loans slurped in " + (stop - start) + " millis")
-    }
-
-    private static void slurpLoansFromCSVFile(csvFileName) throws IOException {
-        CSVReader reader = new CSVReader(new InputStreamReader(
-            new GZIPInputStream(Analyze.class.getResourceAsStream("/lendingclub/" + csvFileName))))
-        reader.readNext() // descriptor row
-        reader.readNext() // header row
-        def loanCSV
-        while ((loanCSV = reader.readNext()) != null) {
-            LOAN_CSV_DATA.add(loanCSV)
+            count++
         }
+        def stop = System.currentTimeMillis()
+        println (count + " loans slurped in " + (stop - start) + " millis")
     }
 }
