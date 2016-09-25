@@ -23,18 +23,33 @@ public final class Analyze {
         PCT_FORMAT.setMaximumFractionDigits(1);
     }
 
-    private static final def LOAN_FILTERS = []
     private static final def LOANS = [] // loan instances created from raw data
 
     public static void main(String[] args) throws IOException {
         def configFileName = args[0]
         def loansDir = args[1]
-        GroovyShell shell = new GroovyShell()
-        shell.evaluate(new File(configFileName)) // populates LOAN_FILTERS
-
         slurpLoans(new File(loansDir))
+        def scanner = new Scanner(System.in)
+        def okToContinue = true
+        while (okToContinue) {
+            analyze(configFileName)
+            println("Enter 'a' to analyze again, anything else to quit")
+            def response = scanner.next()
+            if (response != "a") {
+                okToContinue = false
+            }
+        }
+    }
+
+    private static void analyze(configFileName) {
+        def loanFilters = []
+        Binding binding = new Binding()
+        binding.setProperty("loanFilters", loanFilters)
+        GroovyShell shell = new GroovyShell(binding)
+        shell.evaluate(new File(configFileName)) // populates loanFilters
+
         List<Run> runs = []
-        LOAN_FILTERS.each { loanFilter ->
+        loanFilters.each { loanFilter ->
             Run run = new Run()
             run.loanFilter = loanFilter
             def purposes = new TreeSet()
