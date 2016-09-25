@@ -133,7 +133,7 @@ public final class Loan {
 
     Loan() {}
     Loan(loanCSV) {
-        for (int i = 0; i<loanCSV.length; i++) {
+        for (int i = 0; i<loanCSV.size(); i++) {
             // copy attribute as-is after trimming
             attrs[i] = loanCSV[i].trim()
             // call csv parser for attr if there is one

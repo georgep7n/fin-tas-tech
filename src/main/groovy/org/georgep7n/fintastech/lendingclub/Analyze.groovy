@@ -22,14 +22,16 @@ public final class Analyze {
         PCT_FORMAT.setMaximumFractionDigits(1);
     }
 
-    private static def LOAN_FILTERS = []
+    private static final def LOAN_FILTERS = []
+    private static final def LOAN_CSV_DATA = [] // raw data in csv format
+    private static final def LOANS = [] // loan instances created from raw data
 
     public static void main(String[] args) throws IOException {
         def configFileName = args[0]
         GroovyShell shell = new GroovyShell()
         shell.evaluate(new File(configFileName)) // populates LOAN_FILTERS
 
-        def allLoans = slurpCSVFiles()
+        slurpLoans()
         List<Run> runs = []
         LOAN_FILTERS.each { loanFilter ->
             Run run = new Run()
@@ -44,7 +46,7 @@ public final class Analyze {
             def countsByGradeAndStatus = [:]
             def countsByStateAndStatus = [:]
             println("Analyzing with filter: " + loanFilter.getDescription().toUpperCase())
-            def loans = filter(allLoans, loanFilter)
+            def loans = filter(LOANS, loanFilter)
             run.numLoans = loans.size()
             println("$run.numLoans loans to analyze")
             if (run.numLoans < 500) {
@@ -135,31 +137,35 @@ public final class Analyze {
         return filteredLoans
     }
 
-    static Object slurpCSVFiles() {
-        def loans = []
-        slurpCSVFile(loans, "LoanStats3a.csv.gz")
-        slurpCSVFile(loans, "LoanStats3b.csv.gz")
-        slurpCSVFile(loans, "LoanStats3c.csv.gz")
-        slurpCSVFile(loans, "LoanStats3d.csv.gz")
-        slurpCSVFile(loans, "LoanStats2016Q1.csv.gz")
-        slurpCSVFile(loans, "LoanStats2016Q2.csv.gz")
-        return loans
-    }
-
-    private static void slurpCSVFile(loans, csvFileName) throws IOException {
-        CSVReader reader = new CSVReader(new InputStreamReader(
-          new GZIPInputStream(Analyze.class.getResourceAsStream("/lendingclub/" + csvFileName))))
-        reader.readNext() // descriptor row
-        reader.readNext() // header row
-        def loanCSV
-        while ((loanCSV = reader.readNext()) != null) {
+    static void slurpLoans() {
+        def start = System.currentTimeMillis()
+        slurpLoansFromCSVFile("LoanStats3a.csv.gz")
+        slurpLoansFromCSVFile("LoanStats3b.csv.gz")
+        slurpLoansFromCSVFile("LoanStats3c.csv.gz")
+        slurpLoansFromCSVFile("LoanStats3d.csv.gz")
+        slurpLoansFromCSVFile("LoanStats2016Q1.csv.gz")
+        slurpLoansFromCSVFile("LoanStats2016Q2.csv.gz")
+        LOAN_CSV_DATA.each({ loanCSV ->
             def loan = new Loan(loanCSV)
             // only include fully paid and charged off loans in the subsequent analysis.
             if ((FULLY_PAID_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX] ||
                     CHARGED_OFF_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX] ||
                     DEFAULT_LOAN_STATUS == loan.attrs[LOAN_STATUS_INDEX])) {
-                loans.add(loan)
+                LOANS.add(loan)
             }
+        })
+        def stop = System.currentTimeMillis()
+        println (LOANS.size() + " loans slurped in " + (stop - start) + " millis")
+    }
+
+    private static void slurpLoansFromCSVFile(csvFileName) throws IOException {
+        CSVReader reader = new CSVReader(new InputStreamReader(
+            new GZIPInputStream(Analyze.class.getResourceAsStream("/lendingclub/" + csvFileName))))
+        reader.readNext() // descriptor row
+        reader.readNext() // header row
+        def loanCSV
+        while ((loanCSV = reader.readNext()) != null) {
+            LOAN_CSV_DATA.add(loanCSV)
         }
     }
 }
