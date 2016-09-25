@@ -17,7 +17,7 @@ public final class Analyze {
         double score
     }
 
-    private static NumberFormat PCT_FORMAT = NumberFormat.getNumberInstance()
+    private static final NumberFormat PCT_FORMAT = NumberFormat.getNumberInstance()
     static {
         PCT_FORMAT.setMinimumFractionDigits(1);
         PCT_FORMAT.setMaximumFractionDigits(1);
