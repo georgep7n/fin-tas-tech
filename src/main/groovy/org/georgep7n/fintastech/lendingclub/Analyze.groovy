@@ -1,6 +1,7 @@
 package org.georgep7n.fintastech.lendingclub
 
-import java.util.zip.*;
+import java.util.zip.*
+import java.util.regex.*
 import au.com.bytecode.opencsv.CSVReader
 import java.text.NumberFormat
 import static org.georgep7n.fintastech.lendingclub.Loan.*
@@ -27,10 +28,11 @@ public final class Analyze {
 
     public static void main(String[] args) throws IOException {
         def configFileName = args[0]
+        def loansDir = args[1]
         GroovyShell shell = new GroovyShell()
         shell.evaluate(new File(configFileName)) // populates LOAN_FILTERS
 
-        slurpLoans()
+        slurpLoans(new File(loansDir))
         List<Run> runs = []
         LOAN_FILTERS.each { loanFilter ->
             Run run = new Run()
@@ -136,20 +138,19 @@ public final class Analyze {
         return filteredLoans
     }
 
-    static void slurpLoans() {
-        slurpLoansFromCSVFile("LoanStats3a.csv.gz")
-        slurpLoansFromCSVFile("LoanStats3b.csv.gz")
-        slurpLoansFromCSVFile("LoanStats3c.csv.gz")
-        slurpLoansFromCSVFile("LoanStats3d.csv.gz")
-        slurpLoansFromCSVFile("LoanStats2016Q1.csv.gz")
-        slurpLoansFromCSVFile("LoanStats2016Q2.csv.gz")
+    static void slurpLoans(loansDir) {
+        loansDir.eachFile { file ->
+            if (file.getName().endsWith(".csv.gz")) {
+                slurpLoansFromCSVFile(file)
+            }
+        }
     }
 
     private static void slurpLoansFromCSVFile(csvFileName) throws IOException {
         def start = System.currentTimeMillis()
         def count=0
         CSVReader reader = new CSVReader(new InputStreamReader(
-            new GZIPInputStream(Analyze.class.getResourceAsStream("/lendingclub/" + csvFileName))))
+            new GZIPInputStream(new FileInputStream(csvFileName))))
         reader.readNext() // descriptor row
         reader.readNext() // header row
         def loanCSV
