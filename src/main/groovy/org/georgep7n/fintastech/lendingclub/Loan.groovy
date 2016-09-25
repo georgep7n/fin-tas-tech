@@ -78,6 +78,31 @@ public final class Loan {
     static final def INQUIRIES_IN_LAST_SIX_MONTHS_INDEX = 27
     static final def MONTHS_SINCE_LAST_DELINQ_INDEX = 28
 
+    static final def GRADE_A = "A"
+    static final def GRADE_B = "B"
+    static final def GRADE_C = "C"
+    static final def GRADE_D = "D"
+    static final def GRADE_E = "E"
+    static final def GRADE_F = "F"
+    static final def GRADE_G = "G"
+
+    static final def TERM_36_MONTHS = "36 months"
+    static final def TERM_60_MONTHS = "60 months"
+
+    static final def HOME_OWNERSHIP_OWN = "OWN"
+    static final def HOME_OWNERSHIP_MORTGAGE = "MORTGAGE"
+    static final def HOME_OWNERSHIP_RENT = "RENT"
+
+    static final def PURPOSE_CAR = "car"
+    static final def PURPOSE_WEDDING = "wedding"
+    static final def PURPOSE_MAJOR_PURCHASE = "major_purchase"
+    static final def PURPOSE_CREDIT_CARD = "credit_card"
+    static final def PURPOSE_HOME_IMPROVEMENT = "home_improvement"
+    static final def PURPOSE_EDUCATIONAL = "educational"
+    static final def PURPOSE_VACATION = "vacation"
+    static final def PURPOSE_HOUSE = "house"
+    static final def PURPOSE_DEBT_CONSOLIDATION = "debt_consolidation"
+
     static final def FULLY_PAID_LOAN_STATUS = "Fully Paid"
     static final def CHARGED_OFF_LOAN_STATUS = "Charged Off"
     static final def DEFAULT_LOAN_STATUS = "Default"
