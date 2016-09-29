@@ -74,7 +74,7 @@ public final class Loan {
     static final def LOAN_STATUS_INDEX = 16
     static final def PURPOSE_INDEX = 20
     static final def DEBT_TO_INCOME_RATIO_INDEX = 24
-    static final def DELINQ_LAST_2_YEARS_INDEX = 25
+    static final def DELINQ_LAST_TWO_YEARS_INDEX = 25
     static final def INQUIRIES_IN_LAST_SIX_MONTHS_INDEX = 27
     static final def MONTHS_SINCE_LAST_DELINQ_INDEX = 28
 
@@ -128,6 +128,8 @@ public final class Loan {
         desc = new AttrDescriptor(LOAN_STATUS_INDEX, ATTR_TYPE_STRING)
         desc.parser = { value -> value == DEFAULT_LOAN_STATUS ? CHARGED_OFF_LOAN_STATUS : value }
         attrDescriptors[LOAN_STATUS_INDEX] = desc
+        desc = new AttrDescriptor(DELINQ_LAST_TWO_YEARS_INDEX, ATTR_TYPE_NUMBER)
+        attrDescriptors[DELINQ_LAST_TWO_YEARS_INDEX] = desc
     }
     final def attrs = []
 

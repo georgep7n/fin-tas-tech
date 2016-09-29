@@ -61,10 +61,9 @@ public final class Analyze {
             def countsByPurposeAndStatus = [:]
             def countsByGradeAndStatus = [:]
             def countsByStateAndStatus = [:]
-            println("Analyzing with filter: " + loanFilter.getDescription().toUpperCase())
             def loans = filter(LOANS, loanFilter)
             run.numLoans = loans.size()
-            println("$run.numLoans loans to analyze")
+            println("Analyzing $run.numLoans loans with filter: " + loanFilter.getDescription().toUpperCase())
             if (run.numLoans < 500) {
                 println("not enough loans to analyze")
             } else {
@@ -109,6 +108,8 @@ public final class Analyze {
                 def numFullyPaid = countsByStatus[FULLY_PAID_LOAN_STATUS]
                 def numTotal = numChargedOff + numFullyPaid
                 run.score = 100 * ((numFullyPaid / numTotal) as double)
+                // TODO if verbose specified in config
+                /*
                 println("Overall " + FULLY_PAID_LOAN_STATUS + ": " + PCT_FORMAT.format(run.score) + "%")
                 println()
                 println("Fully Paid by Purpose")
@@ -126,6 +127,7 @@ public final class Analyze {
                     statsByFactorAndStatus(countsByStateAndStatus, (String) state)
                 }
                 println("---------------------")
+                */
             }
         }
         println("Run Results")
