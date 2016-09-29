@@ -41,15 +41,20 @@ public final class Analyze {
         }
     }
 
-    private static void analyze(configFileName) {
+    static class Config {
         def loanFilters = []
+        def verbose
+    }
+
+    private static void analyze(configFileName) {
+        def config = new Config()
         Binding binding = new Binding()
-        binding.setProperty("loanFilters", loanFilters)
+        binding.setProperty("config", config)
         GroovyShell shell = new GroovyShell(binding)
         shell.evaluate(new File(configFileName)) // populates loanFilters
 
         List<Run> runs = []
-        loanFilters.each { loanFilter ->
+        config.loanFilters.each { loanFilter ->
             Run run = new Run()
             run.loanFilter = loanFilter
             def purposes = new TreeSet()
@@ -108,26 +113,26 @@ public final class Analyze {
                 def numFullyPaid = countsByStatus[FULLY_PAID_LOAN_STATUS]
                 def numTotal = numChargedOff + numFullyPaid
                 run.score = 100 * ((numFullyPaid / numTotal) as double)
-                // TODO if verbose specified in config
-                /*
-                println("Overall " + FULLY_PAID_LOAN_STATUS + ": " + PCT_FORMAT.format(run.score) + "%")
-                println()
-                println("Fully Paid by Purpose")
-                purposes.each { purpose ->
-                    statsByFactorAndStatus(countsByPurposeAndStatus, (String) purpose)
+
+                if (config.verbose) {
+                    println("Overall " + FULLY_PAID_LOAN_STATUS + ": " + PCT_FORMAT.format(run.score) + "%")
+                    println()
+                    println("Fully Paid by Purpose")
+                    purposes.each { purpose ->
+                        statsByFactorAndStatus(countsByPurposeAndStatus, (String) purpose)
+                    }
+                    println()
+                    println("Fully Paid by Grade")
+                    grades.each { grade ->
+                        statsByFactorAndStatus(countsByGradeAndStatus, (String) grade)
+                    }
+                    println("Fully Paid by State")
+                    println("State,% Fully Paid,Total")
+                    states.each { state ->
+                        statsByFactorAndStatus(countsByStateAndStatus, (String) state)
+                    }
+                    println("---------------------")
                 }
-                println()
-                println("Fully Paid by Grade")
-                grades.each { grade ->
-                    statsByFactorAndStatus(countsByGradeAndStatus, (String) grade)
-                }
-                println("Fully Paid by State")
-                println("State,% Fully Paid,Total")
-                states.each { state ->
-                    statsByFactorAndStatus(countsByStateAndStatus, (String) state)
-                }
-                println("---------------------")
-                */
             }
         }
         println("Run Results")
